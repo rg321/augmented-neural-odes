@@ -9,7 +9,7 @@ from anode.models import ODENet
 from anode.conv_models import ConvODENet
 from anode.discrete_models import ResNet
 from anode.training import Trainer
-from experiments.dataloaders import mnist, cifar10, tiny_imagenet
+from experiments.dataloaders import mnist, cifar10, tiny_imagenet, galaxy_zoo
 from viz.plots import histories_plt
 
 
@@ -31,6 +31,8 @@ def run_and_save_experiments_img(device, path_to_config):
     # Create a folder to store experiment results
     timestamp = time.strftime("%Y-%m-%d_%H-%M")
     directory = "img_results_{}_{}".format(timestamp, config["id"])
+    os.chdir("..")
+    os.chdir("img_results")
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -59,6 +61,10 @@ def run_and_save_experiments_img(device, path_to_config):
         data_loader = tiny_imagenet(training_config["batch_size"])
         img_size = (3, 64, 64)
         output_dim = 200
+    if dataset == 'galaxy_zoo':
+        data_loader, test_loader = galaxy_zoo(training_config["batch_size"])
+        img_size = (1, 28, 28)
+        output_dim = 5
 
     only_success = True  # Boolean to keep track of any experiments failing
 
@@ -139,7 +145,10 @@ def run_and_save_experiments_img(device, path_to_config):
             for epoch in range(training_config["epochs"]):
                 print("\nEpoch {}".format(epoch + 1))
                 try:
-                    trainer.train(data_loader, 1)
+                    if test_loader:
+                        trainer.train(data_loader, 1, test_loader)
+                    else:
+                        trainer.train(data_loader, 1)
                     end_training = False
                 except AssertionError as e:
                     only_success = False

@@ -1,7 +1,7 @@
 {
-  "id": "mnist_experiments",
+  "id": "gz",
   "num_reps": 5,
-  "dataset": "mnist",
+  "dataset": "galaxy_zoo",
   "model_configs": [
   {
       "type": "anode",
@@ -24,9 +24,10 @@
   }
 ],
   "training_config": {
-      "batch_size": 256,
+      "batch_size": 128,
       "record_freq": 10,
       "print_freq": 10,
-      "epochs": 20
+      "epochs": 10
   }
 }
+

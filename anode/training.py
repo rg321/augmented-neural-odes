@@ -1,6 +1,8 @@
 import json
 import torch.nn as nn
 from numpy import mean
+import torch
+import numpy as np
 
 
 class Trainer():
@@ -58,7 +60,7 @@ class Trainer():
         # Only resnets have a number of layers attribute
         self.is_resnet = hasattr(self.model, 'num_layers')
 
-    def train(self, data_loader, num_epochs):
+    def train(self, data_loader, num_epochs, test_loader=None):
         """Trains model on data in data_loader for num_epochs.
 
         Parameters
@@ -71,6 +73,21 @@ class Trainer():
             avg_loss = self._train_epoch(data_loader)
             if self.verbose:
                 print("Epoch {}: {:.3f}".format(epoch + 1, avg_loss))
+            # print("Testing...")
+            if test_loader:
+                self.model.eval()
+                accuracy = 0.0
+                num_items = 0
+                with torch.no_grad():
+                    for batch_idx, (data, target) in enumerate(test_loader):
+                        data = data.to(self.device)
+                        target = target.to(self.device)
+                        output = self.model(data)
+                        accuracy += torch.sum(torch.argmax(output, dim=1) == target).item()
+                        num_items += data.shape[0]
+                accuracy = accuracy * 100 / num_items
+                if self.verbose:
+                    print("Accuracy: {}%".format(np.round(accuracy, 3)))
 
     def _train_epoch(self, data_loader):
         """Trains model for an epoch.
@@ -99,6 +116,8 @@ class Trainer():
             loss.backward()
             self.optimizer.step()
             epoch_loss += loss.item()
+
+
 
             if not self.is_resnet:
                 iteration_backward_nfes = self._get_and_reset_nfes()
