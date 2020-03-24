@@ -31,8 +31,8 @@ def run_and_save_experiments_img(device, path_to_config):
     # Create a folder to store experiment results
     timestamp = time.strftime("%Y-%m-%d_%H-%M")
     directory = "img_results_{}_{}".format(timestamp, config["id"])
-    os.chdir("..")
-    os.chdir("img_results")
+    # os.chdir("..")
+    # os.chdir("img_results")
     if not os.path.exists(directory):
         os.makedirs(directory)
 
