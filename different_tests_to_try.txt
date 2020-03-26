@@ -1,0 +1,3 @@
+crop vs resize
+learning rates
+diff num channels
