@@ -15,11 +15,18 @@ import os
 """
 
 os.chdir("..")
-print('path is ',os.path)
+print('path is ',os.getcwd())
 if not os.path.exists("imageFolder"):
     os.makedirs("imageFolder")
 
-# os.chdir("imageFolder")
+os.chdir("imageFolder")
+
+folders=['0','1','2','3','4','5']
+for fol in folders:
+    if not os.path.exists(fol):
+        os.makedirs(fol)
+
+os.chdir("..")
 
 """ galaxy-zoo-the-galaxy-challenge folder is at level 1
 """
