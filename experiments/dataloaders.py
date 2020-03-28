@@ -356,8 +356,8 @@ def galaxy_zoo(training_config, perc=1.0):
     #     transforms.Normalize((0.5,), (0.5,)),
     # ])
 
-    # gz_root = '/mnt/f/IITH/research/physics/galaxy_zoo/GalaxyClassification/imageFolder_small'
-    gz_root = '/content/drive/My Drive/imageFolder'
+    gz_root = '/home/cs19mtech11019/cs19mtech11024/imageFolder'
+    # gz_root = '/content/drive/My Drive/imageFolder'
 
     gz_dataset = datasets.ImageFolder(root=gz_root
             # ,train=True, download=True
