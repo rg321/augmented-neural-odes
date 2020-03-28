@@ -62,8 +62,9 @@ def run_and_save_experiments_img(device, path_to_config):
         img_size = (3, 64, 64)
         output_dim = 200
     if dataset == 'galaxy_zoo':
-        data_loader, test_loader = galaxy_zoo(training_config["batch_size"])
-        img_size = (1, 28, 28)
+        data_loader, test_loader = galaxy_zoo(training_config)
+        size=training_config["img_size"]
+        img_size = (1, size, size)
         output_dim = 5
 
     only_success = True  # Boolean to keep track of any experiments failing

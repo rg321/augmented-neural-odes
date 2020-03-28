@@ -73,6 +73,7 @@ class Trainer():
             avg_loss = self._train_epoch(data_loader)
             if self.verbose:
                 print("Epoch {}: {:.3f}".format(epoch + 1, avg_loss))
+                
             # print("Testing...")
             if test_loader:
                 self.model.eval()

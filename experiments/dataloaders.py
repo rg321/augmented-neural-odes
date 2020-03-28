@@ -336,12 +336,15 @@ class TinyImageNet(Dataset):
 
         return img, label
 
-def galaxy_zoo(batch_size=256, test_batch_size=256, size=28, perc=1.0):
+def galaxy_zoo(training_config, perc=1.0):
     from torch.utils.data.sampler import SubsetRandomSampler
+    batch_size=training_config['batch_size']
+    test_batch_size=training_config['test_batch_size']
+    size=training_config['img_size']
     transform_train = transforms.Compose([
             transforms.Grayscale(num_output_channels=1),
-            # transforms.CenterCrop((75,75)),
-            transforms.Resize(size),
+            transforms.CenterCrop((size,size)),
+            # transforms.Resize(size),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,)),
         ])
@@ -353,7 +356,7 @@ def galaxy_zoo(batch_size=256, test_batch_size=256, size=28, perc=1.0):
     #     transforms.Normalize((0.5,), (0.5,)),
     # ])
 
-    # gz_root = '/mnt/f/IITH/research/physics/galaxy_zoo/GalaxyClassification/imageFolder'
+    # gz_root = '/mnt/f/IITH/research/physics/galaxy_zoo/GalaxyClassification/imageFolder_small'
     gz_root = '/content/drive/My Drive/imageFolder'
 
     gz_dataset = datasets.ImageFolder(root=gz_root

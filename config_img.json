@@ -24,10 +24,12 @@
   }
 ],
   "training_config": {
-      "batch_size": 256,
-      "record_freq": 1000,
-      "print_freq": 10,
-      "epochs": 50
+      "batch_size": 16,
+      "test_batch_size": 10,
+      "img_size": 75,
+      "record_freq": 10,
+      "print_freq": 1,
+      "epochs": 10
   }
 }
 
