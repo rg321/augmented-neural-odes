@@ -11,6 +11,7 @@ from anode.discrete_models import ResNet
 from anode.training import Trainer
 from experiments.dataloaders import mnist, cifar10, tiny_imagenet, galaxy_zoo
 from viz.plots import histories_plt
+import functools
 
 
 def run_and_save_experiments_img(device, path_to_config):
@@ -67,6 +68,7 @@ def run_and_save_experiments_img(device, path_to_config):
         img_size = (1, size, size)
         output_dim = 5
 
+    data_dim = functools.reduce(lambda x,y: x*y, img_size)
     only_success = True  # Boolean to keep track of any experiments failing
 
     for i, model_config in enumerate(model_configs):
