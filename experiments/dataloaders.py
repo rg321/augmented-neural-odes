@@ -341,10 +341,11 @@ def galaxy_zoo(training_config, perc=1.0):
     batch_size=training_config['batch_size']
     test_batch_size=training_config['test_batch_size']
     size=training_config['img_size']
+    crop_size=training_config['crop_size']
     transform_train = transforms.Compose([
             transforms.Grayscale(num_output_channels=1),
-            transforms.CenterCrop((size,size)),
-            # transforms.Resize(size),
+            transforms.CenterCrop((crop_size,crop_size)),
+            transforms.Resize(size),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,)),
         ])
