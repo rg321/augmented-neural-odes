@@ -319,6 +319,6 @@ def dataset_mean_loss(trainer, data_loader, device):
         x_batch = x_batch.to(device)
         y_batch = y_batch.to(device)
         y_pred = trainer.model(x_batch)
-        loss = trainer._loss(y_pred, y_batch)
+        loss = trainer.loss_func(y_pred, y_batch)
         epoch_loss += loss.item()
     return epoch_loss / len(data_loader)
