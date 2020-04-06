@@ -265,7 +265,7 @@ def run_and_save_experiments_img(device, path_to_config):
     # Create plots
 
     # Extract size of augmented dims
-    augment_labels = ['p = 0' if model_config['type'] != 'odenet' else 'p = {}'.format(model_config['augment_dim'])
+    augment_labels = ['p = 0' if model_config['type'] != 'anode' else 'p = {}'.format(model_config['augment_dim'])
                       for model_config in config['model_configs']]
     # Create losses figure
     # Note that we can only calculate mean loss if all models trained to
