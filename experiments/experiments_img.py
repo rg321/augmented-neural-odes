@@ -43,6 +43,7 @@ def run_and_save_experiments_img(device, path_to_config):
 
     num_reps = config["num_reps"]
     dataset = config["dataset"]
+    output_dim = config["output_dim"]
     model_configs = config["model_configs"]
     training_config = config["training_config"]
 
@@ -66,7 +67,7 @@ def run_and_save_experiments_img(device, path_to_config):
         data_loader, test_loader = galaxy_zoo(training_config)
         size=training_config["img_size"]
         img_size = (1, size, size)
-        output_dim = 5
+        output_dim = output_dim
 
     data_dim = functools.reduce(lambda x,y: x*y, img_size)
     only_success = True  # Boolean to keep track of any experiments failing

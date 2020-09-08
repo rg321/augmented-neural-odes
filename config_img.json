@@ -1,17 +1,18 @@
 {
   "id": "gz",
   "num_reps": 1,
+  "output_dim": 5,
   "dataset": "galaxy_zoo",
   "model_configs": [
   {
       "type": "anode",
       "num_filters": 64,
-      "augment_dim": 5,
+      "augment_dim": 25,
       "time_dependent": true,
       "lr": 1e-3,
       "non_linearity": "relu",
-      "weight_decay": 0.0,
-      "validation": false
+      "weight_decay": 0.001,
+      "validation": true
   },
   {
       "type": "odenet",
@@ -19,18 +20,17 @@
       "time_dependent": true,
       "lr": 1e-3,
       "non_linearity": "relu",
-      "weight_decay": 0.0,
-      "validation": false
+      "weight_decay": 0.001,
+      "validation": true
   }
 ],
   "training_config": {
-      "batch_size": 256,
-      "test_batch_size": 256,
-      "crop_size": 150,
-      "img_size": 100,
+      "batch_size": 10,
+      "test_batch_size": 5,
+      "crop_size":400,
+      "img_size": 64,
       "record_freq": 100,
       "print_freq": 50,
-      "epochs": 15
+      "epochs": 25
   }
 }
-
