@@ -150,7 +150,7 @@ def run_and_save_experiments_img(device, path_to_config):
                 print("\nEpoch {}".format(epoch + 1))
                 try:
                     if test_loader:
-                        trainer.train(data_loader, 1, test_loader)
+                        trainer.train(data_loader, 1, output_dim, test_loader)
                     else:
                         trainer.train(data_loader, 1)
                     end_training = False

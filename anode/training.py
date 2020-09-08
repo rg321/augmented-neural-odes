@@ -4,6 +4,8 @@ from numpy import mean
 import torch
 import numpy as np
 
+# from sklearn.metrics import confusion_matrix
+
 
 class Trainer():
     """Class used to train ODENets, ConvODENets and ResNets.
@@ -60,7 +62,7 @@ class Trainer():
         # Only resnets have a number of layers attribute
         self.is_resnet = hasattr(self.model, 'num_layers')
 
-    def train(self, data_loader, num_epochs, test_loader=None):
+    def train(self, data_loader, num_epochs, nb_classes, test_loader=None):
         """Trains model on data in data_loader for num_epochs.
 
         Parameters
@@ -75,6 +77,7 @@ class Trainer():
                 print("Epoch {}: {:.3f}".format(epoch + 1, avg_loss))
                 
             # print("Testing...")
+            confusion_matrix = torch.zeros(nb_classes, nb_classes)
             if test_loader:
                 self.model.eval()
                 accuracy = 0.0
@@ -86,9 +89,12 @@ class Trainer():
                         output = self.model(data)
                         accuracy += torch.sum(torch.argmax(output, dim=1) == target).item()
                         num_items += data.shape[0]
+                        for t, p in zip(target.view(-1), output.view(-1)):
+                            confusion_matrix[t.long(), p.long()] += 1
                 accuracy = accuracy * 100 / num_items
                 if self.verbose:
                     print("Accuracy: {}%".format(np.round(accuracy, 3)))
+            print("confusion_matrix", confusion_matrix)
 
     def _train_epoch(self, data_loader):
         """Trains model for an epoch.
@@ -100,6 +106,8 @@ class Trainer():
         epoch_loss = 0.
         epoch_nfes = 0
         epoch_backward_nfes = 0
+
+
         for i, (x_batch, y_batch) in enumerate(data_loader):
             self.optimizer.zero_grad()
 
