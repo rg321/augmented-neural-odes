@@ -1,3 +1,9 @@
 crop vs resize
 learning rates
 diff num channels
+
+validation
+decay rate
+compensate crop size and batch size
+
+84,3

@@ -364,50 +364,35 @@ def galaxy_zoo(training_config, perc=1.0):
     gz_root = '/home/cs19mtech11019/cs19mtech11024/mtvso_local/dataset'
 
     gz_dataset = datasets.ImageFolder(root=gz_root
-            # ,train=True, download=True
-            , transform=transform_train
-        )
+        ,transform=transform_train)
 
-    # total_images = len(gz_dataset)
-
-    # train_dataset, test_dataset = random_split(gz_dataset,[
-    #     int(0.9*total_images),
-    #     int(0.1*total_images)
-    # ])
-
-    split = .9
+    split_1 = .8
+    split_2 = .1
     shuffle_dataset = True
     random_seed= 42
 
     # Creating data indices for training and validation splits:
     dataset_size = len(gz_dataset)
     indices = list(range(dataset_size))
-    split = int(np.floor(split * dataset_size))
+    split_1 = int(np.floor(split_1 * dataset_size))
+    split_2 = int(np.floor(split_2 * dataset_size))
     if shuffle_dataset :
         np.random.seed(random_seed)
         np.random.shuffle(indices)
-    train_indices, test_indices = indices[:split], indices[split:]
+    train_indices, eval_indices, test_indices = indices[:split_1], indices[split_1:(split_1+split_2)], indices[(split_1+indices_2):]
 
     # Creating PT data samplers and loaders:
     train_sampler = SubsetRandomSampler(train_indices)
+    eval_sampler = SubsetRandomSampler(eval_indices)
     test_sampler = SubsetRandomSampler(test_indices)
 
-
-
     train_loader = DataLoader(gz_dataset
-        ,batch_size=batch_size,
-        shuffle=False, num_workers=1, drop_last=True
-        ,sampler=train_sampler
-    )
+        ,batch_size=batch_size, shuffle=False, num_workers=1, drop_last=True, sampler=train_sampler)
 
-    # train_eval_loader = DataLoader(validation_dataset
-    #     ,batch_size=test_batch_size, shuffle=True, num_workers=2, drop_last=True
-    # )
+    eval_loader = DataLoader(gz_dataset
+        ,batch_size=test_batch_size, shuffle=False, num_workers=1, drop_last=True, sampler=eval_sampler)
 
     test_loader = DataLoader(gz_dataset
-        ,batch_size=test_batch_size,
-        shuffle=False, num_workers=1, drop_last=True
-        ,sampler=test_sampler
-    )
+        ,batch_size=test_batch_size, shuffle=False, num_workers=1, drop_last=True, sampler=test_sampler)
 
-    return train_loader, test_loader
+    return train_loader, eval_loader, test_loader
