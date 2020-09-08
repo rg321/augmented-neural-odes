@@ -64,7 +64,7 @@ def run_and_save_experiments_img(device, path_to_config):
         img_size = (3, 64, 64)
         output_dim = 200
     if dataset == 'galaxy_zoo':
-        data_loader, test_loader = galaxy_zoo(training_config)
+        data_loader, eval_loader, test_loader = galaxy_zoo(training_config)
         size=training_config["img_size"]
         img_size = (1, size, size)
         output_dim = output_dim

@@ -357,11 +357,11 @@ def galaxy_zoo(training_config, perc=1.0):
     #     transforms.Normalize((0.5,), (0.5,)),
     # ])
 
-    gz_root = '/home/cs19mtech11019/cs19mtech11024/imageFolder'
     # gz_root = '/content/drive/My Drive/imageFolder'
     #gz_root = '/mnt/f/IITH/research/physics/galaxy_zoo/GalaxyClassification/imageFolder_small'
 
     gz_root = '/home/cs19mtech11019/cs19mtech11024/mtvso_local/dataset'
+    gz_root = '/raid/cs19mtech11019/imageFolder'
 
     gz_dataset = datasets.ImageFolder(root=gz_root
         ,transform=transform_train)
@@ -379,7 +379,7 @@ def galaxy_zoo(training_config, perc=1.0):
     if shuffle_dataset :
         np.random.seed(random_seed)
         np.random.shuffle(indices)
-    train_indices, eval_indices, test_indices = indices[:split_1], indices[split_1:(split_1+split_2)], indices[(split_1+indices_2):]
+    train_indices, eval_indices, test_indices = indices[:split_1], indices[split_1:(split_1+split_2)], indices[(split_1+split_2):]
 
     # Creating PT data samplers and loaders:
     train_sampler = SubsetRandomSampler(train_indices)
