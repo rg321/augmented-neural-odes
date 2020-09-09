@@ -152,7 +152,7 @@ def run_and_save_experiments_img(device, path_to_config):
                     if test_loader:
                         trainer.train(data_loader, 1, output_dim, test_loader)
                     else:
-                        trainer.train(data_loader, 1)
+                        trainer.train(data_loader, 1, output_dim)
                     end_training = False
                 except AssertionError as e:
                     only_success = False

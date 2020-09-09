@@ -77,19 +77,21 @@ class Trainer():
                 print("Epoch {}: {:.3f}".format(epoch + 1, avg_loss))
                 
             # print("Testing...")
-            confusion_matrix = torch.zeros(nb_classes, nb_classes)
             if test_loader:
                 self.model.eval()
                 accuracy = 0.0
                 num_items = 0
+                confusion_matrix = torch.zeros(nb_classes, nb_classes)
                 with torch.no_grad():
                     for batch_idx, (data, target) in enumerate(test_loader):
                         data = data.to(self.device)
                         target = target.to(self.device)
                         output = self.model(data)
+                        print('output ',torch.argmax(output, dim=1))
+                        print('target ',target)
                         accuracy += torch.sum(torch.argmax(output, dim=1) == target).item()
                         num_items += data.shape[0]
-                        for t, p in zip(target.view(-1), output.view(-1)):
+                        for t, p in zip(target.view(-1), torch.argmax(output, dim=1).view(-1)):
                             confusion_matrix[t.long(), p.long()] += 1
                 accuracy = accuracy * 100 / num_items
                 if self.verbose:
