@@ -2,7 +2,13 @@ import torch
 import torch.nn as nn
 from anode.models import ODEBlock
 from torchdiffeq import odeint, odeint_adjoint
+import torch.nn.functional as F
 
+
+def norm(dim, type='group_norm'):
+    if type == 'group_norm':
+        return nn.GroupNorm(dim, dim)
+    return nn.BatchNorm2d(dim)
 
 class Conv2dTime(nn.Conv2d):
     """
@@ -51,8 +57,13 @@ class ConvODEFunc(nn.Module):
         self.time_dependent = time_dependent
         self.nfe = 0  # Number of function evaluations
         self.channels, self.height, self.width = img_size
+        self.channels=64
+        # print('image size ......', img_size)
+        # print('num channels ........ ', self.channels)
         self.channels += augment_dim
+        # print('num channels ........ final ......... ', self.channels)
         self.num_filters = num_filters
+        # self.norm = nn.BatchNorm2d(num_filters)
 
         if time_dependent:
             self.conv1 = Conv2dTime(self.channels, self.num_filters,
@@ -62,6 +73,7 @@ class ConvODEFunc(nn.Module):
             self.conv3 = Conv2dTime(self.num_filters, self.channels,
                                     kernel_size=1, stride=1, padding=0)
         else:
+
             self.conv1 = nn.Conv2d(self.channels, self.num_filters,
                                    kernel_size=1, stride=1, padding=0)
             self.conv2 = nn.Conv2d(self.num_filters, self.num_filters,
@@ -92,11 +104,18 @@ class ConvODEFunc(nn.Module):
             out = self.non_linearity(out)
             out = self.conv3(t, out)
         else:
-            out = self.conv1(x)
+            batch_size, channels, height, width = x.shape
+            aug = torch.zeros(batch_size, self.augment_dim,
+                              height, width).to(self.device)
+            x_aug = torch.cat([x, aug], 1)
+            out = self.conv1(x_aug)
+            out = self.norm(out)
             out = self.non_linearity(out)
             out = self.conv2(out)
+            out = self.norm(out)
             out = self.non_linearity(out)
             out = self.conv3(out)
+            out = self.norm(out)
         return out
 
 
@@ -146,6 +165,16 @@ class ConvODENet(nn.Module):
         self.flattened_dim = (img_size[0] + augment_dim) * img_size[1] * img_size[2]
         self.time_dependent = time_dependent
         self.tol = tol
+        self.total_dim = 64 + self.augment_dim
+        self.downsampling = nn.Sequential(
+            nn.Conv2d(img_size[0], 64, 3, 1),
+            norm(64),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, 4, 2, 1),
+            norm(64),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, 4, 2, 1),
+        )
 
         odefunc = ConvODEFunc(device, img_size, num_filters, augment_dim,
                               time_dependent, non_linearity)
@@ -153,11 +182,31 @@ class ConvODENet(nn.Module):
         self.odeblock = ODEBlock(device, odefunc, is_conv=True, tol=tol,
                                  adjoint=adjoint)
 
-        self.linear_layer = nn.Linear(self.flattened_dim, self.output_dim)
+        # self.linear_layer = nn.Linear(self.flattened_dim, self.output_dim)
+        self.fc = nn.Linear(self.total_dim, self.output_dim)
 
     def forward(self, x, return_features=False):
-        features = self.odeblock(x)
-        pred = self.linear_layer(features.view(features.size(0), -1))
-        if return_features:
-            return features, pred
-        return pred
+        # features = self.odeblock(x)
+        # pred = self.linear_layer(features.view(features.size(0), -1))
+        # if return_features:
+        #     return features, pred
+        # return pred
+        x = self.downsampling(x)
+        batch_size, channels, height, width = x.shape
+        # print(x.shape)
+        # aug = torch.zeros(batch_size, augment_dim,
+        #                   height, width).to(self.device)
+        # x_aug = torch.cat([x, aug], 1)
+        # x = self.downsampling(x)
+        # x = self.feature(x)
+        x = self.odeblock(x)
+        # batch x 64 x 6 x 6
+        total_dim = 64 + self.augment_dim
+        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        x = norm(total_dim)(x)
+        x = F.relu(x)
+        x = self.avg_pool(x)
+        shape = torch.prod(torch.tensor(x.shape[1:])).item()
+        x = x.view(-1, shape)
+        out = self.fc(x)
+        return out

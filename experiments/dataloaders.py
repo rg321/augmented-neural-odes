@@ -358,10 +358,10 @@ def galaxy_zoo(training_config, perc=1.0):
     # ])
 
     # gz_root = '/content/drive/My Drive/imageFolder'
-    #gz_root = '/mnt/f/IITH/research/physics/galaxy_zoo/GalaxyClassification/imageFolder_small'
+    gz_root = '/mnt/f/IITH/research/physics/galaxy_zoo/GalaxyClassification/imageFolder'
 
-    gz_root = '/home/cs19mtech11019/cs19mtech11024/mtvso_local/dataset'
-    gz_root = '/raid/cs19mtech11019/imageFolder'
+    # gz_root = '/home/cs19mtech11019/cs19mtech11024/mtvso_local/dataset'
+    # gz_root = '/raid/cs19mtech11019/imageFolder'
 
     gz_dataset = datasets.ImageFolder(root=gz_root
         ,transform=transform_train)
